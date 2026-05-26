@@ -110,6 +110,7 @@ layout_topbar('Manage Accounts');
             <?php if ($staff === []): ?>
                 <div class="empty-state">No staff accounts yet. Create Kapitan and member accounts above.</div>
             <?php else: ?>
+                <div class="table-responsive">
                 <table class="doc-table">
                     <thead>
                         <tr>
@@ -149,6 +150,7 @@ layout_topbar('Manage Accounts');
                     <?php endforeach; ?>
                     </tbody>
                 </table>
+                </div>
             <?php endif; ?>
         </div>
     </div>

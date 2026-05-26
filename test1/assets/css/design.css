@@ -608,3 +608,88 @@ body {
   .history-grid { grid-template-columns: 1fr; }
   .info-grid { grid-template-columns: 1fr; }
 }
+
+/* Responsive helpers: mobile menu toggle, table wrapper, and small screen tweaks */
+.mobile-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  color: var(--dms-blue-bright);
+  cursor: pointer;
+}
+
+/* Sidebar off-canvas for smaller screens */
+@media (max-width: 900px) {
+  .mobile-menu-toggle { display: inline-flex; }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    transform: translateX(-110%);
+    transition: transform 0.22s ease;
+    z-index: 60;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  }
+  .app { position: relative; }
+  body.sidebar-open .sidebar { transform: translateX(0); }
+  /* simple backdrop using page wrap pseudo-element */
+  .page-wrap { position: relative; }
+  body.sidebar-open .page-wrap::after {
+    content: '';
+    position: fixed;
+    inset: 0 0 0 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 50;
+  }
+  /* make main content scrollable when sidebar is open on small screens */
+  body.sidebar-open .main { pointer-events: auto; }
+}
+
+/* Responsive table wrapper */
+.table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+@media (max-width: 480px) {
+  .topbar h2 { font-size: 1rem; }
+  .btn-primary, .btn-upload, .btn-view { width: 100%; }
+  .nav-item { padding: 10px 12px; font-size: 14px; }
+  .search-box { min-width: 0; flex: 1 1 auto; }
+}
+
+/* Additional responsive refinements */
+@media (max-width: 1024px) {
+  .panel-box { padding: 14px; }
+  .page-wrap { padding: 16px; }
+}
+
+@media (max-width: 768px) {
+  /* stack form grids into single column */
+  form .row, form > div[style*="grid-template-columns"] { display: block; }
+  form .form-group { width: 100%; }
+  .upload-zone { padding: 24px; }
+  .doc-preview-iframe { min-height: 50vh; }
+}
+
+@media (max-width: 480px) {
+  .doc-table th, .doc-table td { padding: 8px 6px; font-size: 13px; }
+  .doc-table thead { display: table-header-group; }
+  .brand-text .brand-name { font-size: 1rem; }
+  .remarks-input { width: 100%; }
+  .approval-actions { min-width: 0; align-items: stretch; }
+}
+
+/* Make images and iframes flexible */
+img, .doc-preview-image, .brand-logo, .doc-preview-iframe { max-width: 100%; height: auto; }
+
+/* Reduce visual noise on small screens */
+@media (max-width: 640px) {
+  .stats-bar { display: block; }
+  .stat-card { padding: 10px; }
+}

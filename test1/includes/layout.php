@@ -115,9 +115,42 @@ function layout_begin(string $title, string $activeNav, array $user, int $pendin
 function layout_end(): void
 {
     ?>
-    </div>
+        </div>
 </div>
 </div>
+<script>
+    (function () {
+        var toggle = document.querySelector('.mobile-menu-toggle');
+        if (!toggle) return;
+        function openSidebar() {
+            document.body.classList.add('sidebar-open');
+        }
+        function closeSidebar() {
+            document.body.classList.remove('sidebar-open');
+        }
+        toggle.addEventListener('click', function () {
+            if (document.body.classList.contains('sidebar-open')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        });
+        // close when clicking the backdrop
+        document.addEventListener('click', function (ev) {
+            if (!document.body.classList.contains('sidebar-open')) return;
+            var sidebar = document.querySelector('.sidebar');
+            if (!sidebar) return;
+            var target = ev.target;
+            if (!sidebar.contains(target) && !target.closest('.mobile-menu-toggle')) {
+                closeSidebar();
+            }
+        });
+        // close on Escape
+        document.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Escape') closeSidebar();
+        });
+    })();
+</script>
 </body>
 </html>
 <?php
@@ -132,6 +165,7 @@ function layout_topbar(string $pageTitle, array $options = []): void
     $uploadHref = $options['upload_href'] ?? null;
     ?>
     <div class="topbar">
+        <button class="mobile-menu-toggle" aria-label="Open menu"><i class="ti ti-menu" aria-hidden="true"></i></button>
         <h2><?= e($pageTitle) ?></h2>
         <?php if ($showSearch): ?>
         <form class="search-box" method="get" action="<?= e($searchAction) ?>" role="search">

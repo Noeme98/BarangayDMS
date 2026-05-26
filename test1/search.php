@@ -93,6 +93,7 @@ layout_stats($total, $digitized, $pending);
     <?php if ($documents === []): ?>
         <div class="empty-state">No documents match your filters.</div>
     <?php else: ?>
+        <div class="table-responsive">
         <table class="doc-table">
             <thead>
                 <tr>
@@ -109,6 +110,7 @@ layout_stats($total, $digitized, $pending);
                 <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
     <?php endif; ?>
 </div>
 <?php layout_end(); ?>

@@ -168,6 +168,7 @@ layout_begin($tab === 'digitize' ? 'Digitize Records' : 'Historical Archive', $a
         <?php if ($decadeDocs === []): ?>
             <div class="empty-state">No digitized records match your search. Try another keyword (title, year, subject) or use the Digitize tab to add records.</div>
         <?php else: ?>
+            <div class="table-responsive">
             <table class="doc-table">
                 <thead><tr><th>Document</th><th>Year</th><th>Type</th><th>Subject</th><th></th></tr></thead>
                 <tbody>
@@ -188,6 +189,7 @@ layout_begin($tab === 'digitize' ? 'Digitize Records' : 'Historical Archive', $a
                 <?php endforeach; ?>
                 </tbody>
             </table>
+            </div>
         <?php endif; ?>
     <?php else: ?>
         <form class="search-advanced" method="get" action="archive.php">
