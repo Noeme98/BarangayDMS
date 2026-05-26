@@ -1,0 +1,5 @@
+-- OPTIONAL — not required if you already ran supabase_schema.sql
+-- The app uses existing tables: users, files, pending_files
+--
+-- This file was an alternate schema (documents + approval_logs).
+-- You do NOT need to run this when using the existing Supabase project.

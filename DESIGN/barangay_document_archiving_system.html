@@ -1,0 +1,422 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+
+.app { display: flex; height: 600px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; }
+
+.sidebar {
+  width: 220px; min-width: 220px;
+  background: var(--color-background-secondary);
+  border-right: 0.5px solid var(--color-border-tertiary);
+  display: flex; flex-direction: column;
+}
+.sidebar-header {
+  padding: 16px;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.sidebar-header h1 { font-size: 13px; font-weight: 500; color: var(--color-text-primary); line-height: 1.3; }
+.sidebar-header p { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+
+.sidebar-section { padding: 12px 8px 4px; font-size: 10px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+.nav-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px; margin: 1px 4px;
+  border-radius: var(--border-radius-md);
+  cursor: pointer; font-size: 13px; color: var(--color-text-secondary);
+  transition: background 0.1s;
+}
+.nav-item:hover { background: var(--color-background-primary); color: var(--color-text-primary); }
+.nav-item.active { background: var(--color-background-primary); color: var(--color-text-primary); font-weight: 500; }
+.nav-item i { font-size: 15px; }
+.badge { margin-left: auto; background: var(--color-background-info); color: var(--color-text-info); font-size: 10px; padding: 1px 6px; border-radius: 10px; }
+
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--color-background-primary); }
+
+.topbar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.topbar h2 { font-size: 15px; font-weight: 500; flex: 1; }
+.search-box {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 10px;
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-secondary);
+  font-size: 13px; color: var(--color-text-secondary);
+  cursor: pointer; min-width: 180px;
+}
+.btn-upload {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  border: 0.5px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-md);
+  background: transparent; font-size: 13px; font-weight: 500;
+  color: var(--color-text-primary); cursor: pointer;
+}
+.btn-upload:hover { background: var(--color-background-secondary); }
+
+.stats-bar {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; border-bottom: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-border-tertiary);
+}
+.stat-card {
+  background: var(--color-background-primary);
+  padding: 10px 14px;
+}
+.stat-card .label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 2px; }
+.stat-card .value { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+.stat-card .sub { font-size: 11px; color: var(--color-text-success); }
+
+.content { flex: 1; overflow-y: auto; padding: 12px 16px; }
+
+.filter-row {
+  display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.filter-chip {
+  padding: 4px 10px; font-size: 12px;
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: 20px; cursor: pointer;
+  color: var(--color-text-secondary); background: transparent;
+}
+.filter-chip.active {
+  background: var(--color-background-info);
+  color: var(--color-text-info);
+  border-color: transparent;
+}
+
+.doc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.doc-table th {
+  text-align: left; padding: 6px 10px;
+  font-size: 11px; font-weight: 500; color: var(--color-text-secondary);
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.doc-table td { padding: 9px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); vertical-align: middle; }
+.doc-table tr:hover td { background: var(--color-background-secondary); cursor: pointer; }
+
+.doc-icon { width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; }
+.doc-name { font-weight: 500; color: var(--color-text-primary); }
+.doc-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 1px; }
+
+.status-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 8px; border-radius: 10px; font-weight: 500; }
+.status-approved { background: var(--color-background-success); color: var(--color-text-success); }
+.status-pending { background: var(--color-background-warning); color: var(--color-text-warning); }
+.status-digitized { background: var(--color-background-info); color: var(--color-text-info); }
+.status-review { background: var(--color-background-danger); color: var(--color-text-danger); }
+
+.action-btn { background: none; border: none; cursor: pointer; color: var(--color-text-tertiary); padding: 4px; border-radius: 4px; font-size: 15px; }
+.action-btn:hover { color: var(--color-text-primary); background: var(--color-background-secondary); }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+.approval-queue { }
+.approval-card {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 12px 14px; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 12px;
+}
+.approval-card .info { flex: 1; }
+.approval-card .doc-title { font-size: 13px; font-weight: 500; }
+.approval-card .doc-meta { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+.btn-approve { padding: 5px 12px; font-size: 12px; border-radius: var(--border-radius-md); border: none; background: var(--color-background-success); color: var(--color-text-success); cursor: pointer; font-weight: 500; }
+.btn-reject { padding: 5px 12px; font-size: 12px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: transparent; color: var(--color-text-secondary); cursor: pointer; margin-left: 6px; }
+
+.digitize-section { }
+.upload-zone {
+  border: 1.5px dashed var(--color-border-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: 32px; text-align: center;
+  background: var(--color-background-secondary);
+  margin-bottom: 16px; cursor: pointer;
+}
+.upload-zone i { font-size: 32px; color: var(--color-text-tertiary); }
+.upload-zone p { font-size: 13px; color: var(--color-text-secondary); margin-top: 8px; }
+.upload-zone span { font-size: 11px; color: var(--color-text-tertiary); }
+
+.history-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.hist-card {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 12px;
+}
+.hist-card .year { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+.hist-card .era { font-size: 11px; color: var(--color-text-secondary); }
+.hist-card .count { font-size: 12px; color: var(--color-text-info); margin-top: 6px; }
+.hist-card .bar { height: 3px; background: var(--color-border-tertiary); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+.hist-card .bar-fill { height: 100%; background: var(--color-text-info); border-radius: 2px; }
+</style>
+
+<h2 class="sr-only">Barangay document storage and archiving system interface</h2>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1>Barangay Document System</h1>
+      <p>Records & Archives</p>
+    </div>
+    <div class="sidebar-section">Filing</div>
+    <div class="nav-item active" onclick="showPanel('all')">
+      <i class="ti ti-files" aria-hidden="true"></i> All Documents <span class="badge">84</span>
+    </div>
+    <div class="nav-item" onclick="showPanel('ordinances')">
+      <i class="ti ti-scale" aria-hidden="true"></i> Ordinances
+    </div>
+    <div class="nav-item" onclick="showPanel('permits')">
+      <i class="ti ti-id-badge" aria-hidden="true"></i> Permits
+    </div>
+    <div class="nav-item" onclick="showPanel('reports')">
+      <i class="ti ti-report" aria-hidden="true"></i> Reports
+    </div>
+    <div class="sidebar-section">Workflow</div>
+    <div class="nav-item" onclick="showPanel('approval')">
+      <i class="ti ti-checks" aria-hidden="true"></i> Approval Queue <span class="badge">3</span>
+    </div>
+    <div class="sidebar-section">Archive</div>
+    <div class="nav-item" onclick="showPanel('digitize')">
+      <i class="ti ti-scan" aria-hidden="true"></i> Digitize Records
+    </div>
+    <div class="nav-item" onclick="showPanel('history')">
+      <i class="ti ti-history" aria-hidden="true"></i> Historical Archive
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h2 id="panel-title">All Documents</h2>
+      <div class="search-box"><i class="ti ti-search" aria-hidden="true"></i> Search documents...</div>
+      <button class="btn-upload"><i class="ti ti-upload" aria-hidden="true"></i> Upload</button>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-card"><div class="label">Total Documents</div><div class="value">84</div><div class="sub">↑ 6 this month</div></div>
+      <div class="stat-card"><div class="label">Digitized Records</div><div class="value">312</div><div class="sub">↑ 18 this week</div></div>
+      <div class="stat-card"><div class="label">Pending Approval</div><div class="value">3</div><div class="sub" style="color: var(--color-text-warning);">Needs review</div></div>
+      <div class="stat-card"><div class="label">Storage Used</div><div class="value">4.2 GB</div><div class="sub">of 10 GB</div></div>
+    </div>
+
+    <div class="content">
+
+      <div id="panel-all" class="panel active">
+        <div class="filter-row">
+          <button class="filter-chip active">All</button>
+          <button class="filter-chip">Ordinances</button>
+          <button class="filter-chip">Permits</button>
+          <button class="filter-chip">Reports</button>
+          <button class="filter-chip">Resolutions</button>
+          <button class="filter-chip">Certificates</button>
+        </div>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th>Category</th>
+              <th>Date Filed</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div class="doc-icon" style="background: var(--color-background-info);"><i class="ti ti-scale" style="color: var(--color-text-info);" aria-hidden="true"></i></div>
+                  <div><div class="doc-name">Ordinance No. 2026-04</div><div class="doc-sub">Waste Management Policy</div></div>
+                </div>
+              </td>
+              <td style="color: var(--color-text-secondary);">Ordinances</td>
+              <td style="color: var(--color-text-secondary);">May 12, 2026</td>
+              <td><span class="status-badge status-approved"><i class="ti ti-check" aria-hidden="true"></i> Approved</span></td>
+              <td><button class="action-btn" aria-label="Download"><i class="ti ti-download"></i></button></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div class="doc-icon" style="background: var(--color-background-warning);"><i class="ti ti-id-badge" style="color: var(--color-text-warning);" aria-hidden="true"></i></div>
+                  <div><div class="doc-name">Business Permit BP-2026-118</div><div class="doc-sub">Sari-sari Store – Juan dela Cruz</div></div>
+                </div>
+              </td>
+              <td style="color: var(--color-text-secondary);">Permits</td>
+              <td style="color: var(--color-text-secondary);">May 20, 2026</td>
+              <td><span class="status-badge status-pending"><i class="ti ti-clock" aria-hidden="true"></i> Pending</span></td>
+              <td><button class="action-btn" aria-label="Download"><i class="ti ti-download"></i></button></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div class="doc-icon" style="background: var(--color-background-success);"><i class="ti ti-report" style="color: var(--color-text-success);" aria-hidden="true"></i></div>
+                  <div><div class="doc-name">Q1 2026 Barangay Report</div><div class="doc-sub">Quarterly Financial Summary</div></div>
+                </div>
+              </td>
+              <td style="color: var(--color-text-secondary);">Reports</td>
+              <td style="color: var(--color-text-secondary);">Apr 30, 2026</td>
+              <td><span class="status-badge status-approved"><i class="ti ti-check" aria-hidden="true"></i> Approved</span></td>
+              <td><button class="action-btn" aria-label="Download"><i class="ti ti-download"></i></button></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div class="doc-icon" style="background: var(--color-background-info);"><i class="ti ti-scan" style="color: var(--color-text-info);" aria-hidden="true"></i></div>
+                  <div><div class="doc-name">Birth Record – 1987 Batch</div><div class="doc-sub">Historical Digitization</div></div>
+                </div>
+              </td>
+              <td style="color: var(--color-text-secondary);">Historical</td>
+              <td style="color: var(--color-text-secondary);">May 18, 2026</td>
+              <td><span class="status-badge status-digitized"><i class="ti ti-database" aria-hidden="true"></i> Digitized</span></td>
+              <td><button class="action-btn" aria-label="Download"><i class="ti ti-download"></i></button></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div class="doc-icon" style="background: var(--color-background-danger);"><i class="ti ti-certificate" style="color: var(--color-text-danger);" aria-hidden="true"></i></div>
+                  <div><div class="doc-name">Resolution No. 2026-07</div><div class="doc-sub">Emergency Fund Release</div></div>
+                </div>
+              </td>
+              <td style="color: var(--color-text-secondary);">Resolutions</td>
+              <td style="color: var(--color-text-secondary);">May 22, 2026</td>
+              <td><span class="status-badge status-review"><i class="ti ti-eye" aria-hidden="true"></i> In Review</span></td>
+              <td><button class="action-btn" aria-label="Download"><i class="ti ti-download"></i></button></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div class="doc-icon" style="background: var(--color-background-success);"><i class="ti ti-certificate" style="color: var(--color-text-success);" aria-hidden="true"></i></div>
+                  <div><div class="doc-name">Barangay Clearance – Maria Santos</div><div class="doc-sub">Residency Certification</div></div>
+                </div>
+              </td>
+              <td style="color: var(--color-text-secondary);">Certificates</td>
+              <td style="color: var(--color-text-secondary);">May 23, 2026</td>
+              <td><span class="status-badge status-approved"><i class="ti ti-check" aria-hidden="true"></i> Approved</span></td>
+              <td><button class="action-btn" aria-label="Download"><i class="ti ti-download"></i></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div id="panel-approval" class="panel">
+        <p style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 12px;">3 documents awaiting your approval and routing.</p>
+        <div class="approval-queue">
+          <div class="approval-card">
+            <div class="doc-icon" style="background: var(--color-background-warning);"><i class="ti ti-id-badge" style="color: var(--color-text-warning);" aria-hidden="true"></i></div>
+            <div class="info">
+              <div class="doc-title">Business Permit BP-2026-118</div>
+              <div class="doc-meta">Submitted by: Kagawad Reyes · May 20, 2026</div>
+            </div>
+            <button class="btn-approve">Approve</button>
+            <button class="btn-reject">Return</button>
+          </div>
+          <div class="approval-card">
+            <div class="doc-icon" style="background: var(--color-background-danger);"><i class="ti ti-gavel" style="color: var(--color-text-danger);" aria-hidden="true"></i></div>
+            <div class="info">
+              <div class="doc-title">Resolution No. 2026-07</div>
+              <div class="doc-meta">Submitted by: Secretary Cruz · May 22, 2026</div>
+            </div>
+            <button class="btn-approve">Approve</button>
+            <button class="btn-reject">Return</button>
+          </div>
+          <div class="approval-card">
+            <div class="doc-icon" style="background: var(--color-background-info);"><i class="ti ti-report" style="color: var(--color-text-info);" aria-hidden="true"></i></div>
+            <div class="info">
+              <div class="doc-title">Health & Sanitation Report – May 2026</div>
+              <div class="doc-meta">Submitted by: Health Worker Lim · May 23, 2026</div>
+            </div>
+            <button class="btn-approve">Approve</button>
+            <button class="btn-reject">Return</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="panel-digitize" class="panel">
+        <div class="upload-zone">
+          <i class="ti ti-scan" aria-hidden="true"></i>
+          <p>Scan or upload old paper records</p>
+          <span>Supports JPG, PNG, PDF · Max 50 MB per file</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div style="border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px;">
+            <div style="font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 8px;">Metadata tagging</div>
+            <div style="font-size: 13px; color: var(--color-text-primary);">Document type, year, subject, and reference number are automatically extracted and tagged via OCR.</div>
+          </div>
+          <div style="border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px;">
+            <div style="font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 8px;">Searchable archive</div>
+            <div style="font-size: 13px; color: var(--color-text-primary);">All digitized records are indexed for full-text search so they can be found in seconds.</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="panel-history" class="panel">
+        <p style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 12px;">Historical records by decade — digitization progress shown below.</p>
+        <div class="history-grid">
+          <div class="hist-card">
+            <div class="year">1960s</div><div class="era">Early barangay records</div>
+            <div class="count">42 records digitized</div>
+            <div class="bar"><div class="bar-fill" style="width: 30%"></div></div>
+          </div>
+          <div class="hist-card">
+            <div class="year">1970s</div><div class="era">Post-Martial Law era</div>
+            <div class="count">88 records digitized</div>
+            <div class="bar"><div class="bar-fill" style="width: 55%"></div></div>
+          </div>
+          <div class="hist-card">
+            <div class="year">1980s</div><div class="era">Reconstruction period</div>
+            <div class="count">124 records digitized</div>
+            <div class="bar"><div class="bar-fill" style="width: 72%"></div></div>
+          </div>
+          <div class="hist-card">
+            <div class="year">1990s</div><div class="era">Modern governance begins</div>
+            <div class="count">198 records digitized</div>
+            <div class="bar"><div class="bar-fill" style="width: 88%"></div></div>
+          </div>
+          <div class="hist-card">
+            <div class="year">2000s</div><div class="era">Digital transition era</div>
+            <div class="count">312 records digitized</div>
+            <div class="bar"><div class="bar-fill" style="width: 95%"></div></div>
+          </div>
+          <div class="hist-card">
+            <div class="year">2010s</div><div class="era">E-governance adoption</div>
+            <div class="count">401 records digitized</div>
+            <div class="bar"><div class="bar-fill" style="width: 98%"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const panels = { all: 'All Documents', approval: 'Approval Queue', digitize: 'Digitize Records', history: 'Historical Archive', ordinances: 'Ordinances', permits: 'Permits', reports: 'Reports' };
+
+function showPanel(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const target = document.getElementById('panel-' + id) || document.getElementById('panel-all');
+  if (target) target.classList.add('active');
+
+  const title = panels[id] || 'All Documents';
+  document.getElementById('panel-title').textContent = title;
+
+  event.currentTarget.classList.add('active');
+}
+
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+  });
+});
+
+document.querySelectorAll('.btn-approve').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const card = btn.closest('.approval-card');
+    card.style.opacity = '0.4';
+    btn.textContent = 'Approved ✓';
+    btn.disabled = true;
+  });
+});
+</script>

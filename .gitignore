@@ -1,0 +1,21 @@
+# Secrets
+.env
+**/.env
+
+# Logs
+logs/
+**/logs/*.log
+!**/logs/.gitkeep
+
+# User uploads (keep folder structure)
+test1/uploads/*
+!test1/uploads/.gitkeep
+!test1/uploads/demo/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+Desktop.ini

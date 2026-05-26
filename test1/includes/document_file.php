@@ -1,0 +1,79 @@
+<?php
+/**
+ * Resolve uploaded document paths for download/preview.
+ */
+
+require_once __DIR__ . '/repository.php';
+
+const DOCUMENT_VIEWABLE_MIMES = [
+    'application/pdf',
+    'image/jpeg',
+    'image/png',
+];
+
+/**
+ * @return array{doc: array<string, mixed>, path: string, mime: string, name: string}|null
+ */
+function document_resolve_file(int $id, string $from = 'files'): ?array
+{
+    if ($id <= 0) {
+        return null;
+    }
+
+    $source = $from === 'pending' ? 'pending' : 'files';
+
+    try {
+        $repo = new DocumentRepository();
+        $doc = $repo->findById($id, $source) ?? $repo->findRecordForDownload($id);
+    } catch (Throwable $e) {
+        app_log_exception($e, 'document_resolve_file');
+
+        return null;
+    }
+
+    if ($doc === null) {
+        return null;
+    }
+
+    $relative = ltrim((string) ($doc['file_path'] ?? ''), '/');
+    $absolute = dirname(__DIR__) . '/' . $relative;
+    $realBase = realpath(dirname(__DIR__) . '/uploads');
+    $realFile = realpath($absolute);
+
+    if ($realFile === false || $realBase === false || !str_starts_with($realFile, $realBase)) {
+        return null;
+    }
+
+    $mime = (string) ($doc['mime_type'] ?? '');
+    if ($mime === '' || $mime === 'application/octet-stream') {
+        $detected = mime_content_type($realFile);
+        $mime = is_string($detected) ? $detected : 'application/octet-stream';
+    }
+
+    return [
+        'doc' => $doc,
+        'path' => $realFile,
+        'mime' => $mime,
+        'name' => basename($realFile),
+    ];
+}
+
+function document_is_viewable(string $mime): bool
+{
+    return in_array($mime, DOCUMENT_VIEWABLE_MIMES, true);
+}
+
+function document_preview_url(int $id, string $from = 'files', ?string $back = null): string
+{
+    $url = 'preview.php?id=' . $id . '&from=' . urlencode($from === 'pending' ? 'pending' : 'files');
+    if ($back !== null && $back !== '') {
+        $url .= '&back=' . urlencode($back);
+    }
+
+    return $url;
+}
+
+function document_view_url(int $id, string $from = 'files'): string
+{
+    return 'view.php?id=' . $id . '&from=' . urlencode($from === 'pending' ? 'pending' : 'files');
+}
