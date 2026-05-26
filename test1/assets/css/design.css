@@ -119,6 +119,25 @@ body {
   flex-direction: column;
 }
 
+/* Collapsed sidebar: show icons only */
+body.sidebar-collapsed .sidebar {
+  width: 72px !important;
+  min-width: 72px !important;
+}
+body.sidebar-collapsed .sidebar .brand-text,
+body.sidebar-collapsed .sidebar .sidebar-user,
+body.sidebar-collapsed .sidebar .sidebar-section {
+  display: none;
+}
+body.sidebar-collapsed .nav-item { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
+body.sidebar-collapsed .nav-item .badge { display: none; }
+body.sidebar-collapsed .nav-item i { width: auto; }
+.sidebar-collapse-toggle { display: none; border: none; background: transparent; color: var(--dms-blue-bright); padding: 6px 8px; border-radius: 8px; cursor: pointer; }
+
+@media (min-width: 900px) {
+  .sidebar-collapse-toggle { display: inline-flex; align-items: center; margin-right: 6px; }
+}
+
 .sidebar-header {
   padding: 18px 16px;
   border-bottom: 1px solid var(--dms-border);

@@ -120,35 +120,48 @@ function layout_end(): void
 </div>
 <script>
     (function () {
-        var toggle = document.querySelector('.mobile-menu-toggle');
-        if (!toggle) return;
-        function openSidebar() {
-            document.body.classList.add('sidebar-open');
+        var mobileToggle = document.querySelector('.mobile-menu-toggle');
+        var collapseToggle = document.querySelector('.sidebar-collapse-toggle');
+
+        function openSidebar() { document.body.classList.add('sidebar-open'); }
+        function closeSidebar() { document.body.classList.remove('sidebar-open'); }
+
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', function () {
+                if (document.body.classList.contains('sidebar-open')) closeSidebar(); else openSidebar();
+            });
         }
-        function closeSidebar() {
-            document.body.classList.remove('sidebar-open');
-        }
-        toggle.addEventListener('click', function () {
-            if (document.body.classList.contains('sidebar-open')) {
-                closeSidebar();
-            } else {
-                openSidebar();
-            }
-        });
-        // close when clicking the backdrop
+
+        // backdrop click closes mobile sidebar
         document.addEventListener('click', function (ev) {
             if (!document.body.classList.contains('sidebar-open')) return;
             var sidebar = document.querySelector('.sidebar');
             if (!sidebar) return;
             var target = ev.target;
-            if (!sidebar.contains(target) && !target.closest('.mobile-menu-toggle')) {
-                closeSidebar();
-            }
+            if (!sidebar.contains(target) && !target.closest('.mobile-menu-toggle')) closeSidebar();
         });
-        // close on Escape
-        document.addEventListener('keydown', function (ev) {
-            if (ev.key === 'Escape') closeSidebar();
-        });
+
+        // Escape closes mobile sidebar
+        document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') closeSidebar(); });
+
+        // Sidebar collapse toggle (desktop)
+        function setCollapsedState(collapsed) {
+            if (collapsed) document.body.classList.add('sidebar-collapsed'); else document.body.classList.remove('sidebar-collapsed');
+            try { localStorage.setItem('sidebarCollapsed', collapsed ? '1' : '0'); } catch (e) { /* ignore */ }
+        }
+
+        // initialize from storage
+        try {
+            var saved = localStorage.getItem('sidebarCollapsed');
+            if (saved === '1') setCollapsedState(true);
+        } catch (e) { /* ignore */ }
+
+        if (collapseToggle) {
+            collapseToggle.addEventListener('click', function () {
+                var isCollapsed = document.body.classList.contains('sidebar-collapsed');
+                setCollapsedState(!isCollapsed);
+            });
+        }
     })();
 </script>
 </body>
@@ -166,6 +179,7 @@ function layout_topbar(string $pageTitle, array $options = []): void
     ?>
     <div class="topbar">
         <button class="mobile-menu-toggle" aria-label="Open menu"><i class="ti ti-menu" aria-hidden="true"></i></button>
+        <button class="sidebar-collapse-toggle" aria-label="Collapse sidebar" title="Collapse sidebar"><i class="ti ti-chevrons-left" aria-hidden="true"></i></button>
         <h2><?= e($pageTitle) ?></h2>
         <?php if ($showSearch): ?>
         <form class="search-box" method="get" action="<?= e($searchAction) ?>" role="search">
