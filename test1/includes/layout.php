@@ -272,6 +272,18 @@ function render_document_row(array $doc): void
                    title="Download" aria-label="Download">
                     <i class="ti ti-download"></i>
                 </a>
+                <?php $currentUser = function_exists('auth_user') ? auth_user() : null; ?>
+                <?php if ($currentUser !== null && in_array($currentUser['role'] ?? '', ['admin', 'captain'], true)): ?>
+                <form method="post" action="delete_document.php" style="display:inline;" onsubmit="return confirm('Delete this document? This cannot be undone.');">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="document_id" value="<?= $docId ?>">
+                    <input type="hidden" name="from" value="<?= e($docFrom) ?>">
+                    <input type="hidden" name="return_to" value="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? 'search.php', ENT_QUOTES, 'UTF-8') ?>">
+                    <button type="submit" class="action-btn" title="Delete" aria-label="Delete document">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </form>
+                <?php endif; ?>
             </div>
         </td>
     </tr>

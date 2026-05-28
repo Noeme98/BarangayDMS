@@ -184,6 +184,15 @@ layout_begin($tab === 'digitize' ? 'Digitize Records' : 'Historical Archive', $a
                         <td>
                             <a href="<?= e(document_preview_url((int) $doc['id'], 'files', 'archive.php?tab=history' . ($decadeStart > 0 ? '&decade=' . $decadeStart : '') . ($histKeyword !== '' ? '&keyword=' . urlencode($histKeyword) : ''))) ?>">View</a>
                             · <a href="download.php?id=<?= (int) $doc['id'] ?>">Download</a>
+                            <?php $curr = auth_user(); if ($curr !== null && in_array($curr['role'] ?? '', ['admin', 'captain'], true)): ?>
+                            · <form method="post" action="delete_document.php" style="display:inline;" onsubmit="return confirm('Delete this document? This cannot be undone.');">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="document_id" value="<?= (int) $doc['id'] ?>">
+                                <input type="hidden" name="from" value="files">
+                                <input type="hidden" name="return_to" value="<?= htmlspecialchars($_SERVER['REQUEST_URI'] ?? 'archive.php', ENT_QUOTES, 'UTF-8') ?>">
+                                <button type="submit" class="btn-reject" style="font-size:11px;">Delete</button>
+                            </form>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>

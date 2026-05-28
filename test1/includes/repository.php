@@ -366,6 +366,32 @@ class DocumentRepository extends BaseRepository
         return $items;
     }
 
+    /** Delete a file record and its stored file (if present). Returns true on success. */
+    public function deleteFile(int $id): bool
+    {
+        $row = $this->fetchFileById($id);
+        if ($row === null) {
+            return false;
+        }
+
+        // attempt to delete record via API
+        $r = $this->api->request('files', 'DELETE', ['id' => 'eq.' . $id]);
+        if ($r['error'] !== null) {
+            return false;
+        }
+
+        // remove file from disk if path available
+        $path = (string) ($row['file_path'] ?? '');
+        if ($path !== '') {
+            $abs = dirname(__DIR__) . '/' . ltrim($path, '/');
+            if (is_file($abs)) {
+                @unlink($abs);
+            }
+        }
+
+        return true;
+    }
+
     /** @return array<int, array<string, string>> */
     public function logsForDocument(int $documentId): array
     {
