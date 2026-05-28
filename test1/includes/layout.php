@@ -51,7 +51,12 @@ function layout_begin(string $title, string $activeNav, array $user, int $pendin
         </div>
         <div class="sidebar-user">
             <strong><?= e($user['full_name']) ?></strong>
-            <?= e($isAdmin ? 'System Administrator' : ucfirst($user['role'])) ?>
+            <?php
+            $roleLabel = $isAdmin ? 'System Administrator' : ucfirst($user['role']);
+            if (trim((string) $user['full_name']) !== $roleLabel):
+            ?>
+            <div class="sidebar-role"><?= e($roleLabel) ?></div>
+            <?php endif; ?>
         </div>
 
         <?php if ($isAdmin): ?>

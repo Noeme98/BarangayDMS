@@ -33,10 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = trim($_POST['description'] ?? '');
     $dateFiled = trim($_POST['date_filed'] ?? date('Y-m-d'));
 
-    if ($title === '' || $reference === '' || !isset(DOCUMENT_CATEGORIES[$category])) {
-        flash_set('error', 'Title, reference number, and category are required.');
+    if ($title === '' || $reference === '') {
+        flash_set('error', 'Title and reference number are required.');
         header('Location: upload.php');
         exit;
+    }
+
+    // allow arbitrary UI categories; map to DB category (report) for storage when unknown
+    if ($category === '') {
+        $category = 'report';
     }
 
     if (!in_array(db_file_category($category), DB_FILE_CATEGORIES, true) && $category !== 'historical') {
@@ -120,18 +125,17 @@ layout_topbar($pageTitle);
             <label for="reference_number">Reference number</label>
             <input type="text" id="reference_number" name="reference_number" required maxlength="100" value="<?= e($_POST['reference_number'] ?? '') ?>">
         </div>
-        <div class="form-group">
-            <label for="category">Category</label>
-            <select id="category" name="category" required>
-                <?php foreach (DOCUMENT_CATEGORIES as $key => $label): ?>
-                    <?php if ($key === 'historical') {
-                        continue;
-                    } ?>
-                    <option value="<?= e($key) ?>" <?= ($_POST['category'] ?? '') === $key ? 'selected' : '' ?>><?= e($label) ?></option>
-                <?php endforeach; ?>
-            </select>
-            <small style="color:var(--color-text-tertiary);">Resolutions &amp; certificates are stored under Reports in Supabase.</small>
-        </div>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <input list="category_list" id="category" name="category" required maxlength="100" value="<?= e($_POST['category'] ?? '') ?>">
+                <datalist id="category_list">
+                    <?php foreach (DOCUMENT_CATEGORIES as $key => $label): ?>
+                        <?php if ($key === 'historical') continue; ?>
+                        <option value="<?= e($label) ?>"><?= e($label) ?></option>
+                    <?php endforeach; ?>
+                </datalist>
+                <small style="color:var(--color-text-tertiary);">You may enter a custom category. Unknown categories are stored as "Reports" in Supabase but the UI preserves your category label.</small>
+            </div>
         <div class="form-group">
             <label for="date_filed">Date filed</label>
             <input type="date" id="date_filed" name="date_filed" required value="<?= e($_POST['date_filed'] ?? date('Y-m-d')) ?>">

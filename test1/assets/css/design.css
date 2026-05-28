@@ -129,14 +129,33 @@ body.sidebar-collapsed .sidebar .sidebar-user,
 body.sidebar-collapsed .sidebar .sidebar-section {
   display: none;
 }
+.sidebar {
+  transition: width 0.16s ease;
+}
 body.sidebar-collapsed .nav-item { justify-content: center; padding-left: 0.5rem; padding-right: 0.5rem; }
 body.sidebar-collapsed .nav-item .badge { display: none; }
 body.sidebar-collapsed .nav-item i { width: auto; }
+
+/* Hide link text by zeroing font-size on collapsed links, keep icons visible */
+body.sidebar-collapsed .nav-item { font-size: 0; }
+body.sidebar-collapsed .nav-item i { font-size: 18px; line-height: 1; }
+body.sidebar-collapsed .nav-item::after { display: none; }
+
+/* Center brand logo in collapsed state */
+body.sidebar-collapsed .sidebar-header { display: flex; align-items: center; justify-content: center; }
+body.sidebar-collapsed .brand-logo { margin: 8px 0; }
 .sidebar-collapse-toggle { display: none; border: none; background: transparent; color: var(--dms-blue-bright); padding: 6px 8px; border-radius: 8px; cursor: pointer; }
 
 @media (min-width: 900px) {
   .sidebar-collapse-toggle { display: inline-flex; align-items: center; margin-right: 6px; }
 }
+
+/* Rotate the chevrons to indicate expansion when collapsed */
+body.sidebar-collapsed .sidebar-collapse-toggle i { transform: rotate(180deg); transition: transform 0.18s ease; }
+
+/* Sidebar role label styling */
+.sidebar-user { font-size: 12px; color: var(--color-text-secondary); padding: 12px 16px; }
+.sidebar-user .sidebar-role { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; }
 
 .sidebar-header {
   padding: 18px 16px;
