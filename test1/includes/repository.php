@@ -363,6 +363,13 @@ class DocumentRepository extends BaseRepository
             }
         }
 
+        usort($items, static function (array $a, array $b): int {
+            $aTimestamp = strtotime((string) ($a['date_filed'] ?? '')) ?: 0;
+            $bTimestamp = strtotime((string) ($b['date_filed'] ?? '')) ?: 0;
+
+            return $bTimestamp <=> $aTimestamp;
+        });
+
         return $items;
     }
 
