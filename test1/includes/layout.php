@@ -304,8 +304,10 @@ function render_approval_card(array $doc): void
     $docId = (int) ($doc['id'] ?? 0);
     $docFrom = $qType === 'pending' ? 'pending' : 'files';
     $previewUrl = document_preview_url($docId, $docFrom, 'approve.php');
+    $resolvedFile = document_resolve_file($docId, $docFrom);
+    $missingFile = $resolvedFile === null;
     ?>
-    <div class="approval-card">
+    <div class="approval-card <?= $missingFile ? 'approval-card-missing' : '' ?>">
         <div class="doc-icon" style="background:<?= category_icon_bg($cat) ?>;">
             <i class="ti <?= e(category_icon($cat)) ?>" style="color:<?= category_icon_color($cat) ?>;" aria-hidden="true"></i>
         </div>
@@ -322,17 +324,21 @@ function render_approval_card(array $doc): void
             </div>
         </div>
         <div class="approval-actions">
-            <a class="btn-view" href="<?= e($previewUrl) ?>">
-                <i class="ti ti-eye"></i> View document
-            </a>
-            <form method="post" class="approval-form">
-                <?= csrf_field() ?>
-                <input type="hidden" name="document_id" value="<?= $docId ?>">
-                <input type="hidden" name="queue_type" value="<?= e($qType) ?>">
-                <input type="text" name="remarks" placeholder="Remarks (optional)" class="remarks-input">
-                <button type="submit" name="action" value="approve" class="btn-approve">Approve</button>
-                <button type="submit" name="action" value="return" class="btn-reject">Return</button>
-            </form>
+            <?php if ($missingFile): ?>
+                <div class="empty-state" style="margin:0; padding:12px 14px;">Document file is missing. Remove this item or ask the uploader to resubmit.</div>
+            <?php else: ?>
+                <a class="btn-view" href="<?= e($previewUrl) ?>">
+                    <i class="ti ti-eye"></i> View document
+                </a>
+                <form method="post" class="approval-form">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="document_id" value="<?= $docId ?>">
+                    <input type="hidden" name="queue_type" value="<?= e($qType) ?>">
+                    <input type="text" name="remarks" placeholder="Remarks (optional)" class="remarks-input">
+                    <button type="submit" name="action" value="approve" class="btn-approve">Approve</button>
+                    <button type="submit" name="action" value="return" class="btn-reject">Return</button>
+                </form>
+            <?php endif; ?>
         </div>
     </div>
     <?php

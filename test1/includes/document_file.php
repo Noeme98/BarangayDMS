@@ -40,7 +40,18 @@ function document_resolve_file(int $id, string $from = 'files'): ?array
     $realBase = realpath(dirname(__DIR__) . '/uploads');
     $realFile = realpath($absolute);
 
-    if ($realFile === false || $realBase === false || !str_starts_with($realFile, $realBase)) {
+    if ($realBase === false) {
+        return null;
+    }
+
+    if ($realFile === false || !str_starts_with($realFile, $realBase)) {
+        $fallback = document_find_file_by_basename(basename($relative));
+        if ($fallback !== null) {
+            $realFile = $fallback;
+        }
+    }
+
+    if ($realFile === false || !str_starts_with($realFile, $realBase)) {
         return null;
     }
 
@@ -76,4 +87,28 @@ function document_preview_url(int $id, string $from = 'files', ?string $back = n
 function document_view_url(int $id, string $from = 'files'): string
 {
     return 'view.php?id=' . $id . '&from=' . urlencode($from === 'pending' ? 'pending' : 'files');
+}
+
+function document_find_file_by_basename(string $basename): ?string
+{
+    $uploads = realpath(dirname(__DIR__) . '/uploads');
+    if ($uploads === false) {
+        return null;
+    }
+
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($uploads, FilesystemIterator::SKIP_DOTS)
+    );
+
+    foreach ($iterator as $file) {
+        if (!$file->isFile()) {
+            continue;
+        }
+
+        if (strtolower($file->getFilename()) === strtolower($basename)) {
+            return $file->getRealPath();
+        }
+    }
+
+    return null;
 }
