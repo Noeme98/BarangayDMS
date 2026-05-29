@@ -1,7 +1,7 @@
 <?php
 /**
- * upload.php — Upload new barangay documents (PDF, JPG, PNG — max 50MB).
- * Captain/Admin file directly; members submit to pending_files for Kapitan approval.
+ * upload.php — Upload new barangay documents (PDF, JPG, PNG, DOC, DOCX, ODT — max 50MB).
+ * All uploads are submitted to the Captain approval queue and are not immediately approved.
  */
 
 require_once __DIR__ . '/includes/bootstrap.php';
@@ -70,15 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
     try {
-        if (auth_can_upload($user)) {
-            $payload['status'] = 'approved';
-            $id = $repo->create($payload, false);
-            $msg = 'Document filed and approved.';
-        } else {
-            $payload['status'] = 'pending';
-            $id = $repo->create($payload, true);
-            $msg = 'Document submitted to the Kapitan approval queue.';
-        }
+        $payload['status'] = 'pending';
+        $id = $repo->create($payload, true);
+        $msg = 'Document submitted to the Kapitan approval queue.';
 
         if ($id === null) {
             $detail = $repo->getLastError();
@@ -105,17 +99,13 @@ layout_topbar($pageTitle);
 ?>
 <div class="content">
     <?= flash_render() ?>
-    <?php if ($isMemberSubmit): ?>
-    <p class="content-lead">Submit ordinances, permits, or reports for Kapitan review.</p>
-    <?php elseif ($user['role'] === 'captain'): ?>
-    <p class="content-lead">As Kapitan, upload and file documents directly — they are approved immediately.</p>
-    <?php endif; ?>
+    <p class="content-lead">All uploaded documents are submitted to the Kapitan approval queue and will be approved before filing.</p>
     <form method="post" enctype="multipart/form-data" action="upload.php">
         <?= csrf_field() ?>
         <div class="upload-zone">
             <i class="ti ti-upload"></i>
-            <p>Select PDF, JPG, or PNG (max 50 MB)</p>
-            <input type="file" name="document" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" required style="margin-top:12px;">
+            <p>Select PDF, JPG, PNG, DOC, DOCX, or ODT (max 50 MB)</p>
+            <input type="file" name="document" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.odt,application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text" required style="margin-top:12px;">
         </div>
         <div class="form-group">
             <label for="title">Document title</label>
