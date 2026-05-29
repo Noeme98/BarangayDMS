@@ -160,7 +160,7 @@ layout_topbar('Manage Accounts');
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="user_id" value="<?= (int) $acc['id'] ?>">
-                                    <button type="submit" class="btn-danger" style="font-size:11px;">Delete</button>
+                                    <button type="submit" class="btn-reject" style="font-size:11px;">Delete</button>
                                 </form>
                             </td>
                         </tr>
