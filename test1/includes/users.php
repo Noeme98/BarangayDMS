@@ -87,6 +87,13 @@ class UserRepository
         return $result['error'] === null;
     }
 
+    public function delete(int $id): bool
+    {
+        $result = $this->api->request('users', 'DELETE', ['id' => 'eq.' . $id], null);
+
+        return $result['error'] === null;
+    }
+
     public function verifyPassword(array $user, string $plain): bool
     {
         $stored = (string) ($user['password'] ?? '');

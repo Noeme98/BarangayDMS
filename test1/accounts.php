@@ -49,6 +49,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if ($action === 'delete') {
+        $id = (int) ($_POST['user_id'] ?? 0);
+        if ($id === (int) $user['id']) {
+            flash_set('error', 'You cannot delete your own account.');
+        } elseif ($repo->delete($id)) {
+            flash_set('success', 'Account deleted.');
+        } else {
+            flash_set('error', 'Could not delete account.');
+        }
+    }
+
     header('Location: accounts.php');
     exit;
 }
@@ -144,6 +155,12 @@ layout_topbar('Manage Accounts');
                                         <input type="hidden" name="new_status" value="active">
                                         <button type="submit" class="btn-approve" style="font-size:11px;">Enable</button>
                                     <?php endif; ?>
+                                </form>
+                                <form method="post" style="display:inline;margin-left:6px;" onsubmit="return confirm('Delete this account?');">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="user_id" value="<?= (int) $acc['id'] ?>">
+                                    <button type="submit" class="btn-danger" style="font-size:11px;">Delete</button>
                                 </form>
                             </td>
                         </tr>
