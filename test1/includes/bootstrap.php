@@ -21,6 +21,9 @@ const APP_ALLOWED_MIMES = [
     'application/pdf' => 'pdf',
     'image/jpeg' => 'jpg',
     'image/png' => 'png',
+    'application/msword' => 'doc',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+    'application/vnd.oasis.opendocument.text' => 'odt',
 ];
 
 const DOCUMENT_CATEGORIES = [

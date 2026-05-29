@@ -23,7 +23,7 @@ function upload_validate(array $file): ?string
         return 'PHP fileinfo extension is disabled. Enable extension=fileinfo in php.ini and restart Apache.';
     }
 
-    if (!isset($file['error']) || is_array($file)) {
+    if (!isset($file['error']) || is_array($file['error'])) {
         return 'Invalid upload.';
     }
 
@@ -46,7 +46,7 @@ function upload_validate(array $file): ?string
     $finfo = new finfo(FILEINFO_MIME_TYPE);
     $mime = $finfo->file($file['tmp_name']);
     if ($mime === false || !isset(APP_ALLOWED_MIMES[$mime])) {
-        return 'Only PDF, JPG, and PNG files are allowed.';
+        return 'Only PDF, JPG, PNG, DOC, DOCX, and ODT files are allowed.';
     }
 
     $ext = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
